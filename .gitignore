@@ -1,0 +1,12 @@
+data/
+*log*
+*collected/
+image/
+images/
+__pycache__/
+*.pkl
+*.png
+macro/
+macro_data/
+*.pth
+pending/
