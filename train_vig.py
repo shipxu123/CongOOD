@@ -139,7 +139,7 @@ def save_ckpt(epoch, model, optimizer, scheduler, loss, ssim, nrms):
     }
     torch.save(checkpoint, "vig_ckpt.pth")
 
-def train_vig():
+def train_vig(train_dataset_dir, test_dataset_dir, log_dir):
     args = parser.parse_args()
     BATCH_SIZE = args.batch_size
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
@@ -155,16 +155,19 @@ def train_vig():
     # train = ViGSet("trainData1.pkl")
     # train = ViGSet("fft_a.pkl")
     # train = ViGSet("mgc_des_perf_1.pkl")
-    train = ViGSet("mgc_des_perf_2.pkl")
+    # train = ViGSet("mgc_des_perf_2.pkl")
+    train = ViGSet(train_dataset_dir)
+
     n_train = len(train)
     gen1 = torch.Generator()
     gen1.manual_seed(0)
     train, _ = torch.utils.data.random_split(train, [num_train, n_train - num_train], gen1)
 
     # test = ViGSet("testData2.pkl")
-    test = ViGSet("fft_b.pkl")
+    # test = ViGSet("fft_b.pkl")
     # test = ViGSet("mgc_des_perf_1.pkl")
-    
+    test = ViGSet(test_dataset_dir)
+
     n_test = len(test)
     gen2 = torch.Generator()
     gen2.manual_seed(0)
@@ -189,7 +192,9 @@ def train_vig():
         best_ssim = ckpt['ssim']
         best_nrms = ckpt['nrms']
 
-    logger_path = "./new_log/"
+    # logger_path = "./new_log/"
+    logger_path = log_dir
+
     if not os.path.exists(logger_path):
           os.makedirs(logger_path)
           print("-----New Folder -----")
@@ -264,10 +269,11 @@ if __name__ == '__main__':
     torch.manual_seed(seed)
     random.seed(seed)
     num_gpus = 1
-    
+
     # test = ViGSet("pending/testViG.pkl")
     # n_test = len(test)
     # gen2 = torch.Generator()
     # gen2.manual_seed(seed)
     # test, _ = torch.utils.data.random_split(test, [test_batch, n_test-test_batch], gen2)
-    train_vig()
+    # train_vig()
+    train_vig("mgc_matrix_mult_1.pkl", "mgc_matrix_mult_2.pkl","./mm1_to_mm2_log/")
