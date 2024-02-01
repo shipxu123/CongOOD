@@ -259,10 +259,10 @@ def detect_vig(train_dataset_dir, test_dataset_dir, ood_dataset_dir):
 
     ood = ViGSet(ood_dataset_dir)
 
-    n_ood= len(ood)
+    n_ood = len(ood)
     gen3 = torch.Generator()
     gen3.manual_seed(0)
-    ood, _ = torch.utils.data.random_split(ood, [num_ood, n_test-num_ood], 3)
+    ood, _ = torch.utils.data.random_split(ood, [num_ood, n_ood-num_ood], 3)
 
     train_loader = GraphDataLoader(test, batch_size=BATCH_SIZE, shuffle=True, num_workers=4)
     test_loader  = GraphDataLoader(train, batch_size=BATCH_SIZE, shuffle=False, num_workers=4)
