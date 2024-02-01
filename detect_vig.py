@@ -303,8 +303,8 @@ def detect_vig(train_dataset_dir, test_dataset_dir, ood_dataset_dir):
 
 if __name__ == '__main__':
     seed = 0
-    train_batch = 8000
-    test_batch = 8000
+    train_batch = 32
+    test_batch = 32
     np.random.seed(seed)
     torch.manual_seed(seed)
     random.seed(seed)
