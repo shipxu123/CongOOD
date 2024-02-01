@@ -26,7 +26,7 @@ import gzip
 
 from tqdm import tqdm
 
-import calculate_log as callog
+import calculate_utils as callog
 from data.dataViG import ViGSet
 from net.ViG import *
 from net.SwinHG import SwinUPer
