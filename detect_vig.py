@@ -27,7 +27,7 @@ import gzip
 from tqdm import tqdm
 
 import calculate_utils as callog
-from data.dataViG import ViGSet
+from dataViG import ViGSet
 from net.ViG import *
 from net.SwinHG import SwinUPer
 from utils.metrics import call_metrics
