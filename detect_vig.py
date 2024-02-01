@@ -309,4 +309,4 @@ if __name__ == '__main__':
     random.seed(seed)
     num_gpus = 1
 
-    detect_vig("mgc_matrix_mult_1.pkl", "mgc_matrix_mult_2.pkl","./mm1_to_mm2_log/")
+    detect_vig("mgc_matrix_mult_1.pkl", "mgc_matrix_mult_2.pkl","mgc_fft_a_flex.pkl")

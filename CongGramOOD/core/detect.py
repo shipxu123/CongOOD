@@ -144,7 +144,7 @@ def save_ckpt(epoch, model, optimizer, scheduler, loss, ssim, nrms):
     torch.save(checkpoint, "vig_ckpt.pth")
 
 
-import calculate_log as callog
+import calculate_utils as callog
 def detect(test_deviations,ood_deviations, verbose=True, normalize=True):
     average_results = {}
     for i in range(1,11):
@@ -185,7 +185,7 @@ def cuda(ob):
             ob[i][j] = ob[i][j].cuda()
     return ob
 
-import calculate_log as callog
+import calculate_utils as callog
 
 def detect(test_deviations, ood_deviations, verbose=True, normalize=True):
     average_results = {}
