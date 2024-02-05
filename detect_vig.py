@@ -40,8 +40,8 @@ parser.add_argument('--batch_size', '-b', type=int, default=8)
 parser.add_argument('--resume', '-r', type=bool, default=False)
 
 EPOCH = 100
-TRAIN_BATCH = 180
-TEST_BATCH = 20
+TRAIN_BATCH = 16
+TEST_BATCH = 16
 NUM_GRID = 32
 PATCH_SIZE = 8
 
@@ -241,9 +241,9 @@ def detect_vig(train_dataset_dir, test_dataset_dir, ood_dataset_dir):
     model.to(device)
     print(f"[INFO] USE {torch.cuda.device_count()} GPUs")
 
-    num_train = 800
-    num_test = 800
-    num_ood = 800
+    num_train = 16
+    num_test = 16
+    num_ood = 16
 
     train = ViGSet(train_dataset_dir)
 
@@ -257,7 +257,7 @@ def detect_vig(train_dataset_dir, test_dataset_dir, ood_dataset_dir):
     n_test = len(test)
     gen2 = torch.Generator()
     gen2.manual_seed(0)
-    test, _ = torch.utils.data.random_split(test, [num_test, n_test-num_test], gen2)
+    test, _ = torch.utils.data.random_split(test, [num_test, n_test - num_test], gen2)
 
     ood = ViGSet(ood_dataset_dir)
 
@@ -275,22 +275,23 @@ def detect_vig(train_dataset_dir, test_dataset_dir, ood_dataset_dir):
         model.load_state_dict(ckpt['model'])
 
     train_preds = []
-    for i, (batch_x, batch_y) in enumerate(tqdm(train_loader)):
-        batch_x = batch_x.to(device)
-        batch_y = torch.tensor(batch_y, dtype=torch.float).to(device)
 
-        congPred = model(batch_x)
-        preds = (congPred.cpu().detach().numpy())
-        train_preds.extend(preds)
+    with torch.no_grad():
+        for i, (batch_x, batch_y) in enumerate(tqdm(train_loader)):
+            batch_x = batch_x.to(device)
+            congPred = model(batch_x)
+            preds = (congPred.cpu().detach().numpy())
+            train_preds.extend(preds)
+            torch.cuda.empty_cache()
 
     test_preds = []
     with torch.no_grad():
         for i, (batch_x, batch_y) in enumerate(tqdm(test_loader)):
             batch_x = batch_x.to(device)
-            batch_y = batch_y.to(device)
             congPred = model(batch_x)
             preds = (congPred.cpu().detach().numpy())
             test_preds.extend(preds)
+            torch.cuda.empty_cache()
 
     print("Done")
 
