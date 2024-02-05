@@ -32,6 +32,8 @@ from net.ViG import *
 from net.SwinHG import SwinUPer
 from utils.metrics import call_metrics
 
+import pdb
+
 parser = argparse.ArgumentParser(description='ViG TRAINING')
 parser.add_argument('--log', '-l', type=str, default="ViG.log")
 parser.add_argument('--batch_size', '-b', type=int, default=8)
@@ -176,14 +178,15 @@ class Detector:
         self.classes = range(10)
     
     def compute_minmaxs(self, train, POWERS=[10]):
+        pdb.set_trace()
         mins, maxs = self.model.get_min_max(train, power=POWERS)
         self.mins[0] = cpu(mins)
         self.maxs[0] = cpu(maxs)
         torch.cuda.empty_cache()
-    
-    def compute_test_deviations(self, test_preds, POWERS=[10]):
-        test_deviations = None
 
+    def compute_test_deviations(self, test_preds, POWERS=[10]):
+        pdb.set_trace()
+        test_deviations = None
         mins = cuda(self.mins[0])
         maxs = cuda(self.maxs[0])
         test_deviations = self.model.get_deviations(test_preds, power=POWERS, mins=mins, maxs=maxs) / test_preds[:, np.newaxis]
@@ -215,7 +218,6 @@ class Detector:
 
         average_results = detect(self.test_deviations, ood_deviations)
         return average_results, self.test_deviations, ood_deviations
-
 
 def G_p(ob, p):
     temp = ob.detach()
@@ -293,8 +295,10 @@ def detect_vig(train_dataset_dir, test_dataset_dir, ood_dataset_dir):
     print("Done")
 
     detector = Detector(model)
-    detector.compute_minmaxs(train, POWERS=range(1,11))
-    detector.compute_test_deviations(POWERS=range(1,11))
+    import pdb
+    pdb.set_trace()
+    detector.compute_minmaxs(train, POWERS=range(1, 3))
+    detector.compute_test_deviations(POWERS=range(1, 3))
 
     print(f"{ood_dataset_dir}")
     ood_results = detector.compute_ood_deviations(ood_loader, POWERS=range(1, 11))
