@@ -219,15 +219,7 @@ class Detector:
         average_results = detect(self.test_deviations, ood_deviations)
         return average_results, self.test_deviations, ood_deviations
 
-def G_p(ob, p):
-    temp = ob.detach()
-    
-    temp = temp**p
-    temp = temp.reshape(temp.shape[0],temp.shape[1],-1)
-    temp = ((torch.matmul(temp,temp.transpose(dim0=2,dim1=1)))).sum(dim=2) 
-    temp = (temp.sign()*torch.abs(temp)**(1/p)).reshape(temp.shape[0],-1)
-    
-    return temp
+
 
 def detect_vig(train_dataset_dir, test_dataset_dir, ood_dataset_dir):
     args = parser.parse_args()

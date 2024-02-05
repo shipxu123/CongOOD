@@ -1005,12 +1005,22 @@ class UPerHead(nn.Module):
         output = F.interpolate(output, self.out_shape, mode='bilinear', align_corners=self.align_corners)
         return output
 
+def G_p(ob, p):
+    temp = ob.detach()
+    
+    temp = temp**p
+    temp = temp.reshape(temp.shape[0],temp.shape[1],-1)
+    temp = ((torch.matmul(temp,temp.transpose(dim0=2,dim1=1)))).sum(dim=2) 
+    temp = (temp.sign()*torch.abs(temp)**(1/p)).reshape(temp.shape[0],-1)
+    
+    return temp
+
+
 class SwinUPer(nn.Module): 
     def __init__(self, chIn=3, chOut=2, chMid=512, img_size=256, patch_size=4, embed_dim=96, 
                  window_size=7, mlp_ratio=4., drop_rate=0., attn_drop_rate=0., drop_path_rate=0.2,
                  depths=[2, 2, 6, 2], num_heads=[3, 6, 12, 24], out_indices=(0, 1, 2, 3)): 
         super().__init__()
-        
         self.vit = SwinTransformer(pretrain_img_size=img_size,
                                    patch_size=patch_size,
                                    in_chans=chIn,
@@ -1049,7 +1059,8 @@ class SwinUPer(nn.Module):
         #                      kernel_size=3, stride=1, padding=1, bias=True, norm=False, relu=False)
         
         self.sigmoid = nn.Sigmoid()
-        
+        self.collecting = False
+
     def forward(self, graph):
         h = graph.ndata['h']
         x = h['Gcell']
@@ -1068,6 +1079,67 @@ class SwinUPer(nn.Module):
         #pred = self.cls_seg1(pred)
         return self.sigmoid(pred)
 
+    def record(self, t):
+        if self.collecting:
+            self.gram_feats.append(t)
+
+    def gram_feature_list(self,x):
+        self.collecting = True
+        self.gram_feats = []
+        self.forward(x)
+        self.collecting = False
+        temp = self.gram_feats
+        self.gram_feats = []
+        return temp
+
+    def get_min_max(self, data, power):
+        mins = []
+        maxs = []
+
+        for i in range(0, len(data), 64):
+            batch = data[i:i+64].cuda()
+            feat_list = self.gram_feature_list(batch)
+
+            for L, feat_L in enumerate(feat_list):
+                if L==len(mins):
+                    mins.append([None]*len(power))
+                    maxs.append([None]*len(power))
+
+                for p,P in enumerate(power):
+                    g_p = G_p(feat_L, P)
+
+                    current_min = g_p.min(dim=0, keepdim=True)[0]
+                    current_max = g_p.max(dim=0, keepdim=True)[0]
+
+                    if mins[L][p] is None:
+                        mins[L][p] = current_min
+                        maxs[L][p] = current_max
+                    else:
+                        mins[L][p] = torch.min(current_min,mins[L][p])
+                        maxs[L][p] = torch.max(current_max,maxs[L][p])
+        
+        return mins,maxs
+
+    def get_deviations(self,data,power,mins,maxs):
+        deviations = []
+        
+        for i in range(0, len(data), 64):
+            batch = data[i:i+64].cuda()
+            feat_list = self.gram_feature_list(batch)
+            batch_deviations = []
+            for L,feat_L in enumerate(feat_list):
+                dev = 0
+                for p,P in enumerate(power):
+                    g_p = G_p(feat_L,P)
+                    
+                    dev +=  (F.relu(mins[L][p]-g_p)/torch.abs(mins[L][p]+10**-6)).sum(dim=1,keepdim=True)
+                    dev +=  (F.relu(g_p-maxs[L][p])/torch.abs(maxs[L][p]+10**-6)).sum(dim=1,keepdim=True)
+                batch_deviations.append(dev.cpu().detach().numpy())
+            batch_deviations = np.concatenate(batch_deviations,axis=1)
+            deviations.append(batch_deviations)
+        deviations = np.concatenate(deviations,axis=0)
+
+        return deviations
 
 def test0():  
     model = SwinUNet(chIn=3, chOut=2, img_size=256, patch_size=4, embed_dim=96, 
