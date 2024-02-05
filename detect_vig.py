@@ -131,7 +131,7 @@ def load_data(train_ratio=0.9):
 
 def detect(test_deviations, ood_deviations, verbose=True, normalize=True):
     average_results = {}
-    for i in range(1,11):
+    for i in range(1, 11):
         random.seed(i)
         
         validation_indices = random.sample(range(len(test_deviations)),int(0.1*len(test_deviations)))
@@ -290,8 +290,8 @@ def detect_vig(train_dataset_dir, test_dataset_dir, ood_dataset_dir):
     detector = Detector(model)
     import pdb
     pdb.set_trace()
-    detector.compute_minmaxs(train, POWERS=range(1, 3))
-    detector.compute_test_deviations(POWERS=range(1, 3))
+    detector.compute_minmaxs(torch.tensor(train_preds), POWERS=range(1, 3))
+    detector.compute_test_deviations(torch.Tensor(test_preds), POWERS=range(1, 3))
 
     print(f"{ood_dataset_dir}")
     ood_results = detector.compute_ood_deviations(ood_loader, POWERS=range(1, 11))
