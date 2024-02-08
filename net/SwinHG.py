@@ -1148,10 +1148,10 @@ class SwinUPer(nn.Module):
                     dev +=  (F.relu(g_p - maxs[L][p]) / torch.abs(maxs[L][p] + 10**-6)).sum(dim=1, keepdim=True)
                 batch_deviations.append(dev.cpu().detach().numpy())
 
-            batch_deviations = np.concatenate(batch_deviations,axis=1)
+            batch_deviations = np.concatenate(batch_deviations, axis=1)
             deviations.append(batch_deviations)
 
-        deviations = np.concatenate(deviations,axis=0)
+        deviations = np.concatenate(deviations, axis=0)
         return deviations
 
 def test0():  

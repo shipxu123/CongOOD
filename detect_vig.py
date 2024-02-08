@@ -183,11 +183,25 @@ class Detector:
         self.maxs[0] = cpu(maxs)
         torch.cuda.empty_cache()
 
-    def compute_test_deviations(self, test_preds, POWERS=[10]):
+    def compute_test_deviations(self, test_loader, POWERS=[10]):
+        test_preds = []
+        device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+
+        with torch.no_grad():
+            for i, (batch_x, batch_y) in enumerate(tqdm(test_loader)):
+                batch_x = batch_x.to(device)
+                batch_y = batch_y.to(device)
+                congPred = self.model(batch_x)
+                preds = (congPred.cpu().detach().numpy())
+                test_preds.extend(preds)
+        print("Done")
+
         test_deviations = None
+        test_preds = np.array(test_preds)
         mins = cuda(self.mins[0])
         maxs = cuda(self.maxs[0])
-        test_deviations = self.model.get_deviations(test_preds, power=POWERS, mins=mins, maxs=maxs) / test_preds[:, np.newaxis]
+
+        test_deviations = self.model.get_deviations(test_loader, power=POWERS, mins=mins, maxs=maxs) / test_preds[:, np.newaxis]
         cpu(mins)
         cpu(maxs)
         torch.cuda.empty_cache()
