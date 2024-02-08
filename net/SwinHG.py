@@ -1068,14 +1068,14 @@ class SwinUPer(nn.Module):
     def forward(self, graph):
         h = graph.ndata['h']
         x = h['Gcell']
-        # record xs, by Peng
-        self.record(x)
 
         rearrange_x = Rearrange('(b h w) (p1 p2 c) -> b c (h p1) (w p2)', p1 = 4, p2 = 4, h=64, w=64)
         x = rearrange_x(x)
         #tmp = x[:, 1:2, :, :] * x[:, 3:5, :, :]
         feats = self.vit(graph)
         pred = self.decoder(feats)
+        # record xs, by Peng
+        self.record(pred)
 
         #pred = self.cls_seg(pred + tmp)
         b, c, h, w = pred.shape
@@ -1084,8 +1084,14 @@ class SwinUPer(nn.Module):
         pred = self.mlp(pred)
         rearrange2 = Rearrange('(b h w) c -> b c h w', h=h, w=w)
         pred = rearrange2(pred)
-        #pred = self.cls_seg1(pred)
-        return self.sigmoid(pred)
+        # record xs, by Peng
+        self.record(pred)
+
+        output = self.sigmoid(pred)
+        # record xs, by Peng
+        self.record(output)
+
+        return output
 
     def record(self, t):
         if self.collecting:
