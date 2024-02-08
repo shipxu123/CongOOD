@@ -1074,8 +1074,6 @@ class SwinUPer(nn.Module):
         #tmp = x[:, 1:2, :, :] * x[:, 3:5, :, :]
         feats = self.vit(graph)
         pred = self.decoder(feats)
-        # record xs, by Peng
-        self.record(pred)
 
         #pred = self.cls_seg(pred + tmp)
         b, c, h, w = pred.shape
