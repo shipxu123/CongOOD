@@ -18,6 +18,8 @@ import dgl.nn.pytorch as dglnn
 from einops import rearrange, repeat
 from einops.layers.torch import Rearrange
 
+from tqdm import tqdm
+
 class Mlp(nn.Module):
     """ Multilayer perceptron."""
 
@@ -1083,7 +1085,7 @@ class SwinUPer(nn.Module):
         if self.collecting:
             self.gram_feats.append(t)
 
-    def gram_feature_list(self,x):
+    def gram_feature_list(self, x):
         self.collecting = True
         self.gram_feats = []
         self.forward(x)
@@ -1092,16 +1094,17 @@ class SwinUPer(nn.Module):
         self.gram_feats = []
         return temp
 
-    def get_min_max(self, data, power):
+    def get_min_max(self, data_loader, power):
         mins = []
         maxs = []
+        device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
-        for i in range(0, len(data), 64):
-            batch = data[i:i+64].cuda()
-            feat_list = self.gram_feature_list(batch)
+        for i, (batch_x, batch_y) in enumerate(tqdm(data_loader)):
+            batch_x = batch_x.to(device)
+            feat_list = self.gram_feature_list(batch_x)
 
             for L, feat_L in enumerate(feat_list):
-                if L==len(mins):
+                if L == len(mins):
                     mins.append([None]*len(power))
                     maxs.append([None]*len(power))
 
@@ -1120,12 +1123,14 @@ class SwinUPer(nn.Module):
         
         return mins,maxs
 
-    def get_deviations(self,data,power,mins,maxs):
+    def get_deviations(self, data_loader, power, mins, maxs):
         deviations = []
-        
-        for i in range(0, len(data), 64):
-            batch = data[i:i+64].cuda()
-            feat_list = self.gram_feature_list(batch)
+        device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+
+        for i, (batch_x, batch_y) in enumerate(tqdm(data_loader)):
+            batch_x = batch_x.to(device)
+            feat_list = self.gram_feature_list(batch_x)
+
             batch_deviations = []
             for L,feat_L in enumerate(feat_list):
                 dev = 0

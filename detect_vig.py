@@ -176,7 +176,7 @@ class Detector:
         self.maxs = {}
         self.model = model
         self.classes = range(10)
-    
+
     def compute_minmaxs(self, train, POWERS=[10]):
         pdb.set_trace()
         mins, maxs = self.model.get_min_max(train, power=POWERS)
