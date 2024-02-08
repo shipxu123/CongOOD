@@ -1134,9 +1134,9 @@ class SwinUPer(nn.Module):
             batch_deviations = []
             for L,feat_L in enumerate(feat_list):
                 dev = 0
+
                 for p,P in enumerate(power):
                     g_p = G_p(feat_L,P)
-                    
                     dev +=  (F.relu(mins[L][p]-g_p)/torch.abs(mins[L][p]+10**-6)).sum(dim=1,keepdim=True)
                     dev +=  (F.relu(g_p-maxs[L][p])/torch.abs(maxs[L][p]+10**-6)).sum(dim=1,keepdim=True)
                 batch_deviations.append(dev.cpu().detach().numpy())

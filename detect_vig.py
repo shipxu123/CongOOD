@@ -220,7 +220,6 @@ class Detector:
         return average_results, self.test_deviations, ood_deviations
 
 
-
 def detect_vig(train_dataset_dir, test_dataset_dir, ood_dataset_dir):
     args = parser.parse_args()
 
@@ -266,32 +265,35 @@ def detect_vig(train_dataset_dir, test_dataset_dir, ood_dataset_dir):
         ckpt = torch.load("vig_ckpt.pth")
         model.load_state_dict(ckpt['model'])
 
-    train_preds = []
+    # train_preds = []
+    # with torch.no_grad():
+    #     for i, (batch_x, batch_y) in enumerate(tqdm(train_loader)):
+    #         batch_x = batch_x.to(device)
+    #         congPred = model(batch_x)
+    #         preds = (congPred.cpu().detach().numpy())
+    #         train_preds.extend(preds)
+    #         torch.cuda.empty_cache()
 
-    with torch.no_grad():
-        for i, (batch_x, batch_y) in enumerate(tqdm(train_loader)):
-            batch_x = batch_x.to(device)
-            congPred = model(batch_x)
-            preds = (congPred.cpu().detach().numpy())
-            train_preds.extend(preds)
-            torch.cuda.empty_cache()
-
-    test_preds = []
-    with torch.no_grad():
-        for i, (batch_x, batch_y) in enumerate(tqdm(test_loader)):
-            batch_x = batch_x.to(device)
-            congPred = model(batch_x)
-            preds = (congPred.cpu().detach().numpy())
-            test_preds.extend(preds)
-            torch.cuda.empty_cache()
+    # test_preds = []
+    # with torch.no_grad():
+    #     for i, (batch_x, batch_y) in enumerate(tqdm(test_loader)):
+    #         batch_x = batch_x.to(device)
+    #         congPred = model(batch_x)
+    #         preds = (congPred.cpu().detach().numpy())
+    #         test_preds.extend(preds)
+    #         torch.cuda.empty_cache()
 
     print("Done")
 
     detector = Detector(model)
     import pdb
     pdb.set_trace()
-    detector.compute_minmaxs(torch.tensor(train_preds), POWERS=range(1, 3))
-    detector.compute_test_deviations(torch.Tensor(test_preds), POWERS=range(1, 3))
+    # detector.compute_minmaxs(torch.tensor(train_preds), POWERS=range(1, 3))
+    # detector.compute_test_deviations(torch.Tensor(test_preds), POWERS=range(1, 3))
+
+    detector.compute_minmaxs(torch.tensor(train_loader), POWERS=range(1, 3))
+
+    detector.compute_test_deviations(torch.Tensor(test_loader), POWERS=range(1, 3))
 
     print(f"{ood_dataset_dir}")
     ood_results = detector.compute_ood_deviations(ood_loader, POWERS=range(1, 11))
