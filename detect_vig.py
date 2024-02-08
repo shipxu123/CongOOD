@@ -291,9 +291,9 @@ def detect_vig(train_dataset_dir, test_dataset_dir, ood_dataset_dir):
     # detector.compute_minmaxs(torch.tensor(train_preds), POWERS=range(1, 3))
     # detector.compute_test_deviations(torch.Tensor(test_preds), POWERS=range(1, 3))
 
-    detector.compute_minmaxs(torch.tensor(train_loader), POWERS=range(1, 3))
+    detector.compute_minmaxs(train_loader, POWERS=range(1, 3))
 
-    detector.compute_test_deviations(torch.Tensor(test_loader), POWERS=range(1, 3))
+    detector.compute_test_deviations(test_loader, POWERS=range(1, 3))
 
     print(f"{ood_dataset_dir}")
     ood_results = detector.compute_ood_deviations(ood_loader, POWERS=range(1, 11))
