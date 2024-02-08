@@ -20,6 +20,8 @@ from einops.layers.torch import Rearrange
 
 from tqdm import tqdm
 
+import pdb
+
 class Mlp(nn.Module):
     """ Multilayer perceptron."""
 
@@ -1066,11 +1068,15 @@ class SwinUPer(nn.Module):
     def forward(self, graph):
         h = graph.ndata['h']
         x = h['Gcell']
+        # record xs, by Peng
+        self.record(x)
+
         rearrange_x = Rearrange('(b h w) (p1 p2 c) -> b c (h p1) (w p2)', p1 = 4, p2 = 4, h=64, w=64)
         x = rearrange_x(x)
         #tmp = x[:, 1:2, :, :] * x[:, 3:5, :, :]
         feats = self.vit(graph)
         pred = self.decoder(feats)
+
         #pred = self.cls_seg(pred + tmp)
         b, c, h, w = pred.shape
         rearrange1 = Rearrange('b c h w -> (b h w) c')
@@ -1124,6 +1130,7 @@ class SwinUPer(nn.Module):
         return mins,maxs
 
     def get_deviations(self, data_loader, power, mins, maxs):
+        pdb.set_trace()
         deviations = []
         device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
@@ -1132,18 +1139,19 @@ class SwinUPer(nn.Module):
             feat_list = self.gram_feature_list(batch_x)
 
             batch_deviations = []
-            for L,feat_L in enumerate(feat_list):
+            for L, feat_L in enumerate(feat_list):
                 dev = 0
 
-                for p,P in enumerate(power):
-                    g_p = G_p(feat_L,P)
-                    dev +=  (F.relu(mins[L][p]-g_p)/torch.abs(mins[L][p]+10**-6)).sum(dim=1,keepdim=True)
-                    dev +=  (F.relu(g_p-maxs[L][p])/torch.abs(maxs[L][p]+10**-6)).sum(dim=1,keepdim=True)
+                for p, P in enumerate(power):
+                    g_p = G_p(feat_L, P)
+                    dev +=  (F.relu(mins[L][p] - g_p) / torch.abs(mins[L][p] + 10**-6)).sum(dim=1, keepdim=True)
+                    dev +=  (F.relu(g_p - maxs[L][p]) / torch.abs(maxs[L][p] + 10**-6)).sum(dim=1, keepdim=True)
                 batch_deviations.append(dev.cpu().detach().numpy())
+
             batch_deviations = np.concatenate(batch_deviations,axis=1)
             deviations.append(batch_deviations)
-        deviations = np.concatenate(deviations,axis=0)
 
+        deviations = np.concatenate(deviations,axis=0)
         return deviations
 
 def test0():  

@@ -178,14 +178,12 @@ class Detector:
         self.classes = range(10)
 
     def compute_minmaxs(self, train, POWERS=[10]):
-        pdb.set_trace()
         mins, maxs = self.model.get_min_max(train, power=POWERS)
         self.mins[0] = cpu(mins)
         self.maxs[0] = cpu(maxs)
         torch.cuda.empty_cache()
 
     def compute_test_deviations(self, test_preds, POWERS=[10]):
-        pdb.set_trace()
         test_deviations = None
         mins = cuda(self.mins[0])
         maxs = cuda(self.maxs[0])
