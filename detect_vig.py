@@ -206,9 +206,10 @@ class Detector:
                 ood_preds.extend(preds)
         print("Done")
 
+        ood_preds = np.array(ood_preds)
         mins = cuda(self.mins[0])
         maxs = cuda(self.maxs[0])
-        ood_deviations = self.model.get_deviations(ood_preds, power=POWERS, mins=mins,maxs=maxs) / ood_preds[:,np.newaxis]
+        ood_deviations = self.model.get_deviations(ood_loader, power=POWERS, mins=mins, maxs=maxs) / ood_preds[:, np.newaxis]
         cpu(self.mins[0])
         cpu(self.maxs[0])
 
