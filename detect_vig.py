@@ -153,6 +153,7 @@ def detect(test_deviations, ood_deviations, verbose=True, normalize=False):
         print(ood_deviations.shape)
 
         results = callog.compute_metric(-test_deviations, -ood_deviations)
+        pdb.set_trace()
         for m in results:
             average_results[m] = average_results.get(m, 0) + results[m]
     
