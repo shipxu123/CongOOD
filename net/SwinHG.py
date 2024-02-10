@@ -1108,19 +1108,21 @@ class SwinUPer(nn.Module):
     def get_min_max(self, data_loader, power):
         mins = []
         maxs = []
-        # device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-        device = torch.device( "cpu")
+        device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+        # device = torch.device( "cpu")
 
         for i, (batch_x, batch_y) in enumerate(tqdm(data_loader)):
             batch_x = batch_x.to(device)
             feat_list = self.gram_feature_list(batch_x)
 
             for L, feat_L in enumerate(feat_list):
-                if L == len(mins):
-                    mins.append([None]*len(power))
-                    maxs.append([None]*len(power))
+                feat_L = feat_L.to(device)
 
-                for p,P in enumerate(power):
+                if L == len(mins):
+                    mins.append([None] * len(power))
+                    maxs.append([None] * len(power))
+
+                for p, P in enumerate(power):
                     g_p = G_p(feat_L, P)
 
                     current_min = g_p.min(dim=0, keepdim=True)[0]
@@ -1138,8 +1140,8 @@ class SwinUPer(nn.Module):
     def get_deviations(self, data_loader, power, mins, maxs):
         pdb.set_trace()
         deviations = []
-        # device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-        device = torch.device( "cpu")
+        device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+        # device = torch.device( "cpu")
 
         for i, (batch_x, batch_y) in enumerate(tqdm(data_loader)):
             batch_x = batch_x.to(device)
@@ -1148,6 +1150,7 @@ class SwinUPer(nn.Module):
             batch_deviations = []
             for L, feat_L in enumerate(feat_list):
                 dev = 0
+                feat_L = feat_L.to(device)
 
                 for p, P in enumerate(power):
                     g_p = G_p(feat_L, P)
