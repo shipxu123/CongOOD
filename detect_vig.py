@@ -143,8 +143,10 @@ def detect(test_deviations, ood_deviations, verbose=True, normalize=True):
         t95 = validation.mean(axis=0)+10**-7
         if not normalize:
             t95 = np.ones_like(t95)
-        test_deviations = (test_deviations/t95[np.newaxis,:]).sum(axis=1)
-        ood_deviations = (ood_deviations/t95[np.newaxis,:]).sum(axis=1)
+
+        pdb.set_trace()
+        test_deviations = (test_deviations/t95[np.newaxis, :]).sum(axis=1)
+        ood_deviations = (ood_deviations/t95[np.newaxis, :]).sum(axis=1)
         
         results = callog.compute_metric(-test_deviations,-ood_deviations)
         for m in results:
@@ -201,10 +203,8 @@ class Detector:
         mins = cuda(self.mins[0])
         maxs = cuda(self.maxs[0])
 
-        pdb.set_trace()
         # test_deviations = self.model.get_deviations(test_loader, power=POWERS, mins=mins, maxs=maxs) / test_preds[:, np.newaxis]
         test_deviations = self.model.get_deviations(test_loader, power=POWERS, mins=mins, maxs=maxs)
-        pdb.set_trace()
 
         cpu(mins)
         cpu(maxs)
