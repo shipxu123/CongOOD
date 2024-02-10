@@ -20,7 +20,7 @@ def compute_metric(known, novel):
     
     tp, fp = dict(), dict()
     tnr_at_tpr95 = dict()
-    
+
     known.sort()
     novel.sort()
     end = np.max([np.max(known), np.max(novel)])
