@@ -1082,8 +1082,9 @@ class SwinUPer(nn.Module):
         pred = self.mlp(pred)
         rearrange2 = Rearrange('(b h w) c -> b c h w', h=h, w=w)
         pred = rearrange2(pred)
-        # record xs, by Peng
-        # self.record(pred)
+
+        #record xs, by Peng
+        self.record(pred.cpu())
 
         output = self.sigmoid(pred)
         # record xs, by Peng
@@ -1107,7 +1108,8 @@ class SwinUPer(nn.Module):
     def get_min_max(self, data_loader, power):
         mins = []
         maxs = []
-        device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+        # device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+        device = torch.device( "cpu")
 
         for i, (batch_x, batch_y) in enumerate(tqdm(data_loader)):
             batch_x = batch_x.to(device)
@@ -1136,7 +1138,8 @@ class SwinUPer(nn.Module):
     def get_deviations(self, data_loader, power, mins, maxs):
         pdb.set_trace()
         deviations = []
-        device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+        # device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+        device = torch.device( "cpu")
 
         for i, (batch_x, batch_y) in enumerate(tqdm(data_loader)):
             batch_x = batch_x.to(device)
