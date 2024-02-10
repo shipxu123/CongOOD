@@ -201,6 +201,7 @@ class Detector:
         mins = cuda(self.mins[0])
         maxs = cuda(self.maxs[0])
 
+        pdb.set_trace()
         test_deviations = self.model.get_deviations(test_loader, power=POWERS, mins=mins, maxs=maxs) / test_preds[:, np.newaxis]
         cpu(mins)
         cpu(maxs)
@@ -299,8 +300,6 @@ def detect_vig(train_dataset_dir, test_dataset_dir, ood_dataset_dir):
     print("Done")
 
     detector = Detector(model)
-    import pdb
-    pdb.set_trace()
     # detector.compute_minmaxs(torch.tensor(train_preds), POWERS=range(1, 3))
     # detector.compute_test_deviations(torch.Tensor(test_preds), POWERS=range(1, 3))
 
