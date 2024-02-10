@@ -31,7 +31,7 @@ def compute_metric(known, novel):
     fp[stype] = -np.ones([num_k+num_n+1], dtype=int)
     tp[stype][0], fp[stype][0] = num_k, num_n
     k, n = 0, 0
-    for l in range(num_k+num_n):
+    for l in range(num_k + num_n):
         if k == num_k:
             tp[stype][l+1:] = tp[stype][l]
             fp[stype][l+1:] = np.arange(fp[stype][l]-1, -1, -1)
@@ -41,7 +41,7 @@ def compute_metric(known, novel):
             fp[stype][l+1:] = fp[stype][l]
             break
         else:
-            if novel[n] < known[k]:
+            if novel[n].sum() < known[k].sum():
                 n += 1
                 tp[stype][l+1] = tp[stype][l]
                 fp[stype][l+1] = fp[stype][l] - 1

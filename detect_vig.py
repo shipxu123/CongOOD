@@ -148,10 +148,13 @@ def detect(test_deviations, ood_deviations, verbose=True, normalize=False):
         if not normalize:
             t95 = np.ones_like(t95)
 
+        print(test_deviations.shape)
+        print(ood_deviations.shape)
         test_deviations = (test_deviations / t95[np.newaxis, :]).sum(axis=1)
         ood_deviations = (ood_deviations / t95[np.newaxis, :]).sum(axis=1)
         print(test_deviations.shape)
         print(ood_deviations.shape)
+
         pdb.set_trace()
 
         results = callog.compute_metric(-test_deviations, -ood_deviations)
