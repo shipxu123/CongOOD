@@ -140,17 +140,19 @@ def detect(test_deviations, ood_deviations, verbose=True, normalize=True):
         validation = test_deviations[validation_indices]
         test_deviations = test_deviations[test_indices]
 
-        t95 = validation.mean(axis=0)+10**-7
+        t95 = validation.mean(axis=0) + 10**-7
         if not normalize:
             t95 = np.ones_like(t95)
 
         pdb.set_trace()
-        test_deviations = (test_deviations/t95[np.newaxis, :]).sum(axis=1)
-        ood_deviations = (ood_deviations/t95[np.newaxis, :]).sum(axis=1)
-        
-        results = callog.compute_metric(-test_deviations,-ood_deviations)
+        test_deviations = (test_deviations / t95).sum()
+        ood_deviations  = (ood_deviations / t95).sum()
+        # test_deviations = (test_deviations / t95[np.newaxis, :]).sum(axis=1)
+        # ood_deviations = (ood_deviations / t95[np.newaxis, :]).sum(axis=1)
+
+        results = callog.compute_metric(-test_deviations, -ood_deviations)
         for m in results:
-            average_results[m] = average_results.get(m,0)+results[m]
+            average_results[m] = average_results.get(m, 0) + results[m]
     
     for m in average_results:
         average_results[m] /= i
@@ -308,7 +310,6 @@ def detect_vig(train_dataset_dir, test_dataset_dir, ood_dataset_dir):
     # detector.compute_test_deviations(torch.Tensor(test_preds), POWERS=range(1, 3))
 
     detector.compute_minmaxs(train_loader, POWERS=range(1, 3))
-
     detector.compute_test_deviations(test_loader, POWERS=range(1, 3))
 
     print(f"{ood_dataset_dir}")
