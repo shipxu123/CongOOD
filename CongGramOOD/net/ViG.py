@@ -273,7 +273,7 @@ class ViG(nn.Module):
             batch = data[i:i+64].cuda()
             feat_list = self.gram_feature_list(batch)
             batch_deviations = []
-            for L,feat_L in enumerate(feat_list):
+            for L, feat_L in enumerate(feat_list):
                 dev = 0
                 for p,P in enumerate(power):
                     g_p = G_p(feat_L,P)
@@ -283,6 +283,6 @@ class ViG(nn.Module):
                 batch_deviations.append(dev.cpu().detach().numpy())
             batch_deviations = np.concatenate(batch_deviations,axis=1)
             deviations.append(batch_deviations)
-        deviations = np.concatenate(deviations,axis=0)
 
+        deviations = np.concatenate(deviations, axis=0)
         return deviations

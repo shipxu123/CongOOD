@@ -1135,7 +1135,7 @@ class SwinUPer(nn.Module):
                         mins[L][p] = torch.min(current_min,mins[L][p])
                         maxs[L][p] = torch.max(current_max,maxs[L][p])
         
-        return mins,maxs
+        return mins, maxs
 
     def get_deviations(self, data_loader, power, mins, maxs):
         pdb.set_trace()

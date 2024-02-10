@@ -202,7 +202,10 @@ class Detector:
         maxs = cuda(self.maxs[0])
 
         pdb.set_trace()
-        test_deviations = self.model.get_deviations(test_loader, power=POWERS, mins=mins, maxs=maxs) / test_preds[:, np.newaxis]
+        # test_deviations = self.model.get_deviations(test_loader, power=POWERS, mins=mins, maxs=maxs) / test_preds[:, np.newaxis]
+        test_deviations = self.model.get_deviations(test_loader, power=POWERS, mins=mins, maxs=maxs)
+        pdb.set_trace()
+
         cpu(mins)
         cpu(maxs)
         torch.cuda.empty_cache()
