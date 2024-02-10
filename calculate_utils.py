@@ -15,6 +15,8 @@ import matplotlib
 # matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 
+import pdb
+
 def compute_metric(known, novel):
     pdb.set_trace()
     stype = ""
