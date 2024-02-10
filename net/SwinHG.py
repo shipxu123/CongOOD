@@ -1087,7 +1087,7 @@ class SwinUPer(nn.Module):
 
         output = self.sigmoid(pred)
         # record xs, by Peng
-        self.record(output)
+        self.record(output.cpu())
 
         return output
 
