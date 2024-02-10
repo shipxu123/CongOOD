@@ -129,7 +129,7 @@ def load_data(train_ratio=0.9):
     return data[:train_num], data[train_num:]
 
 
-def detect(test_deviations, ood_deviations, verbose=True, normalize=True):
+def detect(test_deviations, ood_deviations, verbose=True, normalize=False):
     average_results = {}
 
     test_deviations = test_deviations[np.newaxis, :]
@@ -240,7 +240,7 @@ class Detector:
 
         torch.cuda.empty_cache()
 
-        average_results = detect(self.test_deviations, ood_deviations)
+        average_results = detect(self.test_deviations, ood_deviations, verbose=True, normalize=False)
         return average_results, self.test_deviations, ood_deviations
 
 
