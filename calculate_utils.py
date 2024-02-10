@@ -18,7 +18,6 @@ import matplotlib.pyplot as plt
 import pdb
 
 def compute_metric(known, novel):
-    pdb.set_trace()
     stype = ""
     
     tp, fp = dict(), dict()
@@ -89,7 +88,6 @@ def compute_metric(known, novel):
     pout = np.concatenate([[0.], (fp[stype][0]-fp[stype])/denom, [.5]])
     results[stype][mtype] = np.trapz(pout[pout_ind], 1.-fpr[pout_ind])
 
-    pdb.set_trace()
     return results[stype]
 
 def print_results(results):
