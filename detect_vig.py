@@ -132,8 +132,8 @@ def load_data(train_ratio=0.9):
 def detect(test_deviations, ood_deviations, verbose=True, normalize=True):
     average_results = {}
 
-    test_deviations = test_deviations[:, np.newaxis]
-    ood_deviations = ood_deviations[:, np.newaxis]
+    test_deviations = test_deviations[np.newaxis, :]
+    ood_deviations = ood_deviations[np.newaxis, :]
 
     for i in range(1, 11):
         random.seed(i)

@@ -49,6 +49,7 @@ def compute_metric(known, novel):
                 k += 1
                 tp[stype][l+1] = tp[stype][l] - 1
                 fp[stype][l+1] = fp[stype][l]
+
     tpr95_pos = np.abs(tp[stype] / num_k - .95).argmin()
     tnr_at_tpr95[stype] = 1. - fp[stype][tpr95_pos] / num_n
     mtypes = ['TNR', 'AUROC', 'DTACC', 'AUIN', 'AUOUT']
