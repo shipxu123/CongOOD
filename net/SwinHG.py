@@ -1083,7 +1083,7 @@ class SwinUPer(nn.Module):
         rearrange2 = Rearrange('(b h w) c -> b c h w', h=h, w=w)
         pred = rearrange2(pred)
         # record xs, by Peng
-        self.record(pred)
+        # self.record(pred)
 
         output = self.sigmoid(pred)
         # record xs, by Peng
