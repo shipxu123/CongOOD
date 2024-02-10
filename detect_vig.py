@@ -227,7 +227,8 @@ class Detector:
         ood_preds = np.array(ood_preds)
         mins = cuda(self.mins[0])
         maxs = cuda(self.maxs[0])
-        ood_deviations = self.model.get_deviations(ood_loader, power=POWERS, mins=mins, maxs=maxs) / ood_preds[:, np.newaxis]
+        # ood_deviations = self.model.get_deviations(ood_loader, power=POWERS, mins=mins, maxs=maxs) / ood_preds[:, np.newaxis]
+        ood_deviations = self.model.get_deviations(ood_loader, power=POWERS, mins=mins, maxs=maxs)
         cpu(self.mins[0])
         cpu(self.maxs[0])
 
@@ -311,7 +312,7 @@ def detect_vig(train_dataset_dir, test_dataset_dir, ood_dataset_dir):
     detector.compute_test_deviations(test_loader, POWERS=range(1, 3))
 
     print(f"{ood_dataset_dir}")
-    ood_results = detector.compute_ood_deviations(ood_loader, POWERS=range(1, 11))
+    ood_results = detector.compute_ood_deviations(ood_loader, POWERS=range(1, 3))
     print(ood_results)
 
 

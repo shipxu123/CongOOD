@@ -1138,7 +1138,6 @@ class SwinUPer(nn.Module):
         return mins, maxs
 
     def get_deviations(self, data_loader, power, mins, maxs):
-        pdb.set_trace()
         deviations = []
         device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
         # device = torch.device( "cpu")
