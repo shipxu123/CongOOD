@@ -131,6 +131,10 @@ def load_data(train_ratio=0.9):
 
 def detect(test_deviations, ood_deviations, verbose=True, normalize=True):
     average_results = {}
+
+    test_deviations = test_deviations[:, np.newaxis]
+    ood_deviations = ood_deviations[:, np.newaxis]
+
     for i in range(1, 11):
         random.seed(i)
         
@@ -145,10 +149,8 @@ def detect(test_deviations, ood_deviations, verbose=True, normalize=True):
             t95 = np.ones_like(t95)
 
         pdb.set_trace()
-        test_deviations = (test_deviations / t95).sum()
-        ood_deviations  = (ood_deviations / t95).sum()
-        # test_deviations = (test_deviations / t95[np.newaxis, :]).sum(axis=1)
-        # ood_deviations = (ood_deviations / t95[np.newaxis, :]).sum(axis=1)
+        test_deviations = (test_deviations / t95[np.newaxis, :]).sum(axis=1)
+        ood_deviations = (ood_deviations / t95[np.newaxis, :]).sum(axis=1)
 
         results = callog.compute_metric(-test_deviations, -ood_deviations)
         for m in results:
