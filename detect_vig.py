@@ -36,7 +36,7 @@ import pdb
 
 parser = argparse.ArgumentParser(description='ViG TRAINING')
 parser.add_argument('--log', '-l', type=str, default="ViG.log")
-parser.add_argument('--batch_size', '-b', type=int, default=8)
+parser.add_argument('--batch_size', '-b', type=int, default=2)
 parser.add_argument('--resume', '-r', type=bool, default=False)
 
 EPOCH = 100
