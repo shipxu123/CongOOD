@@ -235,9 +235,6 @@ class Detector:
 
         torch.cuda.empty_cache()
 
-        import pdb
-        pdb.set_trace()
-
         average_results = detect(self.test_deviations, ood_deviations)
         return average_results, self.test_deviations, ood_deviations
 
