@@ -129,13 +129,13 @@ def load_data(train_ratio=0.9):
     return data[:train_num], data[train_num:]
 
 
-def detect(test_deviations, ood_deviations, verbose=True, normalize=False):
+def detect(test_deviations, ood_deviations, verbose=True, normalize=True):
     average_results = {}
 
     for i in range(1, 11):
         random.seed(i)
-        
-        validation_indices = random.sample(range(len(test_deviations)),int(0.1*len(test_deviations)))
+
+        validation_indices = random.sample(range(len(test_deviations)), int(0.1*len(test_deviations)))
         test_indices = sorted(list(set(range(len(test_deviations)))-set(validation_indices)))
 
         validation = test_deviations[validation_indices]
@@ -159,8 +159,10 @@ def detect(test_deviations, ood_deviations, verbose=True, normalize=False):
     
     for m in average_results:
         average_results[m] /= i
+
     if verbose:
         callog.print_results(average_results)
+
     return average_results
 
 
@@ -232,14 +234,16 @@ class Detector:
         ood_preds = np.array(ood_preds)
         mins = cuda(self.mins[0])
         maxs = cuda(self.maxs[0])
-        # ood_deviations = self.model.get_deviations(ood_loader, power=POWERS, mins=mins, maxs=maxs) / ood_preds[:, np.newaxis]
         ood_deviations = self.model.get_deviations(ood_loader, power=POWERS, mins=mins, maxs=maxs)
         cpu(self.mins[0])
         cpu(self.maxs[0])
 
         torch.cuda.empty_cache()
 
-        average_results = detect(self.test_deviations, ood_deviations, verbose=True, normalize=False)
+        import pdb
+        pdb.set_trace()
+
+        average_results = detect(self.test_deviations, ood_deviations)
         return average_results, self.test_deviations, ood_deviations
 
 
@@ -315,9 +319,9 @@ def detect_vig(train_dataset_dir, test_dataset_dir, ood_dataset_dir):
     detector.compute_minmaxs(train_loader, POWERS=range(1, 3))
     detector.compute_test_deviations(test_loader, POWERS=range(1, 3))
 
-    # print(f"{ood_dataset_dir}")
-    # ood_results = detector.compute_ood_deviations(ood_loader, POWERS=range(1, 3))
-    # print(ood_results)
+    print(f"{ood_dataset_dir}")
+    ood_results = detector.compute_ood_deviations(ood_loader, POWERS=range(1, 3))
+    print(ood_results)
 
 
 if __name__ == '__main__':
