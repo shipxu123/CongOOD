@@ -129,27 +129,27 @@ def load_data(train_ratio=0.9):
     return data[:train_num], data[train_num:]
 
 
-def detect(test_deviations, ood_deviations, verbose=True, normalize=True):
+def detect(all_test_deviations, all_ood_deviations, verbose=True, normalize=True):
     average_results = {}
 
     for i in range(1, 11):
         pdb.set_trace()
         random.seed(i)
 
-        validation_indices = random.sample(range(len(test_deviations)), int(0.1*len(test_deviations)))
-        test_indices = sorted(list(set(range(len(test_deviations)))-set(validation_indices)))
+        validation_indices = random.sample(range(len(all_test_deviations)), int(0.1*len(all_test_deviations)))
+        test_indices = sorted(list(set(range(len(all_test_deviations)))-set(validation_indices)))
 
-        validation = test_deviations[validation_indices]
-        test_deviations = test_deviations[test_indices]
+        validation = all_test_deviations[validation_indices]
+        test_deviations = all_test_deviations[test_indices]
 
         t95 = validation.mean(axis=0) + 10**-7
         if not normalize:
             t95 = np.ones_like(t95)
 
-        print(test_deviations.shape)
-        print(ood_deviations.shape)
+        print(all_test_deviations.shape)
+        print(all_ood_deviations.shape)
         test_deviations = (test_deviations / t95[np.newaxis, :]).sum(axis=1)
-        ood_deviations = (ood_deviations / t95[np.newaxis, :]).sum(axis=1)
+        ood_deviations = (all_ood_deviations / t95[np.newaxis, :]).sum(axis=1)
         print(test_deviations.shape)
         print(ood_deviations.shape)
 
