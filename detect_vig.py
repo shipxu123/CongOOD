@@ -133,7 +133,6 @@ def detect(all_test_deviations, all_ood_deviations, verbose=True, normalize=True
     average_results = {}
 
     for i in range(1, 11):
-        pdb.set_trace()
         random.seed(i)
 
         validation_indices = random.sample(range(len(all_test_deviations)), int(0.1*len(all_test_deviations)))
