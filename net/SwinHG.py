@@ -1075,6 +1075,9 @@ class SwinUPer(nn.Module):
         feats = self.vit(graph)
         pred = self.decoder(feats)
 
+        #record xs, by Peng
+        self.record(pred.cpu())
+
         #pred = self.cls_seg(pred + tmp)
         b, c, h, w = pred.shape
         rearrange1 = Rearrange('b c h w -> (b h w) c')
