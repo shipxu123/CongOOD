@@ -1073,7 +1073,7 @@ class SwinUPer(nn.Module):
         x = rearrange_x(x)
 
         #record xs, by Peng
-        self.record(pred.cpu())
+        self.record(x.cpu())
 
         #tmp = x[:, 1:2, :, :] * x[:, 3:5, :, :]
         feats = self.vit(graph)
