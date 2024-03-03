@@ -246,94 +246,35 @@ def split_dataset(train_dataset_dir):
 
     Xs = []
     Ys = []
-    Y_mean_values = []
-    Y_max_values = []
 
     with torch.no_grad():
         for i, (X, Y) in enumerate(tqdm(data_loader)):
             Xs.append(X)
             Ys.append(Y)
-            Y_mean_values.append(torch.mean(Y).item())
-            Y_max_values.append(torch.max(Y).item())
 
-    print(Y_mean_values)
-    print(Y_max_values)
-    # split Xs and Ys into two parts according to Y values
-    # split_points = [(min_val + max_val) / 2 for min_val, max_val in zip(Y_min_values, Y_max_values)]
+    # Calculate the mean for each Y
+    mean_values = [y.mean().item() for y in Ys]
 
-    # Xs_part1 = []
-    # Ys_part1 = []
-    # Xs_part2 = []
-    # Ys_part2 = []
+    # Calculate the median of the mean values
+    median_mean_value = torch.median(torch.tensor(mean_values)).item()
 
-    # for X, Y, split_point in zip(Xs, Ys, split_points):
-        # if torch.all(Y < split_point):
-            # Xs_part1.append(X)
-            # Ys_part1.append(Y)
-        # else:
-            # Xs_part2.append(X)
-            # Ys_part2.append(Y)
+    # Split Xs and Ys into two parts based on mean values
+    Xs_part1 = []
+    Ys_part1 = []
+    Xs_part2 = []
+    Ys_part2 = []
 
+    for i, y in enumerate(mean_values):
+        if y <= median_mean_value:
+            Xs_part1.append(Xs[i])
+            Ys_part1.append(Ys[i])
+        else:
+            Xs_part2.append(Xs[i])
+            Ys_part2.append(Ys[i])
+
+    print(len(Xs_part1))
+    print(len(Xs_part2))
     print("Done")
-
-    # X = X.to(device)
-    # Y = Y.to(device)
-
-# def detect_vig(train_dataset_dir, test_dataset_dir, ood_dataset_dir):
-#     args = parser.parse_args()
-
-#     BATCH_SIZE = args.batch_size
-#     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-
-#     model = SwinUPer(chIn=5, chOut=2, chMid=512, img_size=256, patch_size=4, embed_dim=128, 
-#                  window_size=7, mlp_ratio=4., drop_rate=0., attn_drop_rate=0., drop_path_rate=0.2,
-#                  depths=[2, 8, 18, 4], num_heads=[4, 8, 16, 32], out_indices=(0, 1, 2, 3))
-#     model.to(device)
-#     print(f"[INFO] USE {torch.cuda.device_count()} GPUs")
-
-#     num_train = 16
-#     num_test = 16
-#     num_ood = 16
-
-#     train = ViGSet(train_dataset_dir)
-
-#     n_train = len(train)
-#     gen1 = torch.Generator()
-#     gen1.manual_seed(0)
-#     train, _ = torch.utils.data.random_split(train, [num_train, n_train - num_train], gen1)
-
-#     test = ViGSet(test_dataset_dir)
-
-#     n_test = len(test)
-#     gen2 = torch.Generator()
-#     gen2.manual_seed(0)
-#     test, _ = torch.utils.data.random_split(test, [num_test, n_test - num_test], gen2)
-
-#     ood = ViGSet(ood_dataset_dir)
-
-#     n_ood = len(ood)
-#     gen3 = torch.Generator()
-#     gen3.manual_seed(0)
-#     ood, _ = torch.utils.data.random_split(ood, [num_ood, n_ood - num_ood], gen3)
-
-#     train_loader = GraphDataLoader(test, batch_size=BATCH_SIZE, shuffle=True, num_workers=4)
-#     test_loader  = GraphDataLoader(train, batch_size=BATCH_SIZE, shuffle=False, num_workers=4)
-#     ood_loader   = GraphDataLoader(ood, batch_size=BATCH_SIZE, shuffle=False, num_workers=4)
-
-#     if args.resume:
-#         ckpt = torch.load("vig_ckpt.pth")
-#         model.load_state_dict(ckpt['model'])
-
-#     print("Done")
-
-#     detector = Detector(model)
-
-#     detector.compute_minmaxs(train_loader, POWERS=range(1, 3))
-#     detector.compute_test_deviations(test_loader, POWERS=range(1, 3))
-
-#     print(f"{ood_dataset_dir}")
-#     ood_results = detector.compute_ood_deviations(ood_loader, POWERS=range(1, 3))
-#     print(ood_results)
 
 
 if __name__ == '__main__':
