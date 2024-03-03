@@ -1069,14 +1069,14 @@ class SwinUPer(nn.Module):
         h = graph.ndata['h']
         x = h['Gcell']
 
+        #record xs, by Peng
+        self.record(x.cpu())
+
         rearrange_x = Rearrange('(b h w) (p1 p2 c) -> b c (h p1) (w p2)', p1 = 4, p2 = 4, h=64, w=64)
         x = rearrange_x(x)
 
         #tmp = x[:, 1:2, :, :] * x[:, 3:5, :, :]
         feats = self.vit(graph)
-
-        #record xs, by Peng
-        self.record(feats.cpu())
 
         pred = self.decoder(feats)
 
