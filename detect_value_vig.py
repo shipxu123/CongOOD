@@ -259,12 +259,17 @@ def split_dataset(dataset_dir):
     # Calculate the median of the mean values
     median_mean_value = torch.median(torch.tensor(mean_values)).item()
 
+    _, indices = torch.sort(mean_values)
+    num_samples = int(0.8 * len(mean_values))
+    p_value = mean_values[indices[num_samples-1]]
+
     # Split Xs and Ys into two parts based on mean values
     indices_part1 = []
     indices_part2 = []
 
     for i, y in enumerate(mean_values):
-        if y <= median_mean_value:
+        # if y <= median_mean_value:
+        if y <= p_value:
             indices_part1.append(i)
         else:
             indices_part2.append(i)
