@@ -294,7 +294,7 @@ def detect_vig(dataset_dir):
     ood_data = Subset(dataset, indices_part2)
 
     # 80% data used for training, 20% for testing
-    num_train = int(len(ind_data) * 0.875)
+    num_train = int(len(ind_data) * 0.75)
     n_ind = len(ind_data)
     gen1 = torch.Generator()
     gen1.manual_seed(0)
