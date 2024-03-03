@@ -290,7 +290,7 @@ def detect_vig(dataset_dir):
 
     dataset = ViGSet(dataset_dir)
 
-    ind_data = Subset(dataset, indices_part1)
+    ind_data = Subset(dataset, indices_part1[:-1])
     ood_data = Subset(dataset, indices_part2)
 
     # 80% data used for training, 20% for testing
