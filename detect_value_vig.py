@@ -38,7 +38,7 @@ import pdb
 
 parser = argparse.ArgumentParser(description='ViG TRAINING')
 parser.add_argument('--log', '-l', type=str, default="ViG.log")
-parser.add_argument('--batch_size', '-b', type=int, default=2)
+parser.add_argument('--batch_size', '-b', type=int, default=4)
 parser.add_argument('--resume', '-r', type=bool, default=False)
 
 EPOCH = 100
@@ -294,7 +294,7 @@ def detect_vig(dataset_dir):
     ood_data = Subset(dataset, indices_part2)
 
     # 80% data used for training, 20% for testing
-    num_train = int(len(ind_data) * 0.8)
+    num_train = int(len(ind_data) * 0.875)
     n_ind = len(ind_data)
     gen1 = torch.Generator()
     gen1.manual_seed(0)
