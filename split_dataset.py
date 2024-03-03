@@ -253,11 +253,11 @@ def split_dataset(train_dataset_dir):
         for i, (X, Y) in enumerate(tqdm(data_loader)):
             Xs.append(X)
             Ys.append(Y)
-            Y_mean_values.append(torch.mean(Y).value())
-            Y_max_values.append(torch.max(Y).value())
+            Y_mean_values.append(torch.mean(Y).item())
+            Y_max_values.append(torch.max(Y).item())
 
-    print(Y_mean_values.value())
-    print(Y_max_values.value())
+    print(Y_mean_values)
+    print(Y_max_values)
     # split Xs and Ys into two parts according to Y values
     # split_points = [(min_val + max_val) / 2 for min_val, max_val in zip(Y_min_values, Y_max_values)]
 
